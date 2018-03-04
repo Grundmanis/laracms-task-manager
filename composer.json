@@ -1,0 +1,32 @@
+{
+    "name": "grundmanis/laracms-pages",
+    "description": "Laracms pages module",
+    "keywords": ["laravel", "cms", "admin", "dashboard", "panel", "content", "module"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Armand Grundmanis",
+            "email": "agrundmanis@inbox.lv"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "grundmanis/laracms": "1.0.*",
+        "dimsav/laravel-translatable": "^8.0",
+        "php": ">=7.0.0",
+        "laravel/framework": "5.5.*"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Grundmanis\\Laracms\\Modules\\Pages\\Providers\\PagesProvider",
+                "Dimsav\\Translatable\\TranslatableServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Grundmanis\\Laracms\\Modules\\Pages\\": "src/"
+        }
+    }
+}
