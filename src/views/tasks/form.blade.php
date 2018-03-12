@@ -39,6 +39,17 @@
         </div>
 
         <div class="form-group">
+            <label for="status">Status<span>*</span></label>
+            <select class="form-control" name="status" id="status">
+                <option @if($task->getStatus() == 'open') selected @endif value="open">Open</option>
+                <option @if($task->getStatus() == 'working') selected @endif value="working">Working</option>
+                <option @if($task->getStatus() == 'testing') selected @endif value="testing">Testing</option>
+                <option @if($task->getStatus() == 'done') selected @endif value="done">Done</option>
+            </select>
+
+        </div>
+
+        <div class="form-group">
             <label for="title">Title<span>*</span></label>
             <input value="{{ formValue($task ?? null, 'title') }}" name="title" class="form-control" id="title" placeholder="Task title">
         </div>
@@ -49,5 +60,34 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Save</button>
+
+        <h3>History <small>Total time: {{ $task->getHours() }} {{ str_plural('hour', $task->getHours()) }} </small></h3>
+        <table class="table table-striped">
+            <tr>
+                <thead>
+                    <tr>
+
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Minutes
+                        </th>
+                        <th>
+                            User id
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($task->history as $history)
+                        <tr>
+                            <td>{{ $history->status }}</td>
+                            <td>{{ $history->minutes }}</td>
+                            <td>{{ $history->user_id }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </tr>
+        </table>
     </form>
 @endsection

@@ -9,6 +9,8 @@ Route::group([
     Route::get('/create', 'TaskManagerController@create')->name('laracms.tasks.create');
     Route::post('/create', 'TaskManagerController@store');
 
+    Route::get('/work/{task}', 'TaskManagerController@work')->name('laracms.tasks.work');
+
     Route::get('/edit/{task}', 'TaskManagerController@edit')->name('laracms.tasks.edit');
     Route::post('/edit/{task}', 'TaskManagerController@update');
 

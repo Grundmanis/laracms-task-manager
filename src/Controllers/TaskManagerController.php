@@ -3,7 +3,9 @@
 namespace Grundmanis\Laracms\Modules\TaskManager\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManager;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerHistory;
 use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +39,7 @@ class TaskManagerController extends Controller
     public function index()
     {
         return view('laracms.tasks::tasks.index', [
-            'tasks' => $this->task->with('project')->get()
+            'tasks' => $this->task->with('project', 'history')->get()
         ]);
     }
 
@@ -95,5 +97,35 @@ class TaskManagerController extends Controller
     {
         $task->delete();
         return redirect()->back()->with('status', 'Task deleted!');
+    }
+
+    public function work(LaracmsTaskManager $task, Request $request)
+    {
+        if (!$first = $task->history()->orderByDesc('id')->first())
+        {
+            $task->history()->create([
+               'status' => 'working',
+               'user_id' => Auth::guard('laracms')->user()->id,
+               'minutes' => 0
+            ]);
+        } else {
+            if ($first->status == LaracmsTaskManagerHistory::STATUS_WORKING) {
+                $startTime = Carbon::parse($first->created_at);
+                $finishTime = Carbon::now();
+                $task->history()->create([
+                    'status' => LaracmsTaskManagerHistory::STATUS_OPEN,
+                    'user_id' => Auth::guard('laracms')->user()->id,
+                    'minutes' => $startTime->diffInMinutes($finishTime)
+                ]);
+            } else {
+                $task->history()->create([
+                    'status' => LaracmsTaskManagerHistory::STATUS_WORKING,
+                    'user_id' => Auth::guard('laracms')->user()->id,
+                    'minutes' => 0
+                ]);
+            }
+        }
+
+        return redirect()->back();
     }
 }

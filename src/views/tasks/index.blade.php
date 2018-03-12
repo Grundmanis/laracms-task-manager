@@ -14,6 +14,7 @@
                     <th>Project</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>Working</th>
                     <th></th>
                 </tr>
             </thead>
@@ -23,8 +24,17 @@
                     <td>#</td>
                     <td>{{ $task->title }}</td>
                     <td>{{ $task->project->name }}</td>
-                    <td>Time</td>
-                    <td>Status</td>
+                    <td>{{ $task->getHours() }}</td>
+                    <td>{{ $task->getStatus() }}</td>
+                    <td>
+                        <a href="{{ route('laracms.tasks.work', $task->id) }}">
+                            @if ($task->getStatus() == 'open')
+                                Start working
+                            @else
+                                Stop working
+                            @endif
+                        </a>
+                    </td>
                     <td>
                         <a href="{{ route('laracms.tasks.edit', $task->id) }}">Edit</a>
                         |
