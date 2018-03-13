@@ -28,7 +28,7 @@
     <form method="post">
         {{ csrf_field() }}
         <div class="form-group">
-            <label for="project_id">Projects<span>*</span></label>
+            <label for="project_id">Project<span>*</span></label>
             <select class="form-control" name="project_id" id="project_id">
                 @foreach($projects as $project)
                     <option @if(formValue($task ?? null, 'project_id') == $project->id) selected @endif value="{{ $project->id }}">
@@ -41,10 +41,9 @@
         <div class="form-group">
             <label for="status">Status<span>*</span></label>
             <select class="form-control" name="status" id="status">
-                <option @if(isset($task) && $task->getStatus() == 'open') selected @endif value="open">Open</option>
-                <option @if(isset($task) && $task->getStatus() == 'working') selected @endif value="working">Working</option>
-                <option @if(isset($task) && $task->getStatus() == 'testing') selected @endif value="testing">Testing</option>
-                <option @if(isset($task) && $task->getStatus() == 'done') selected @endif value="done">Done</option>
+                @foreach(\Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTask::getStatuses() as $key => $status)
+                    <option @if(isset($task) && $task->getStatus() == $key) selected @endif value="{{ $key }}">{{ $status }}</option>
+                @endforeach
             </select>
 
         </div>

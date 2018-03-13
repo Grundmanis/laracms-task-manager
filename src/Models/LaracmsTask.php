@@ -6,11 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class LaracmsTask extends Model
 {
-    protected $fillable = ['project_id', 'title', 'description', 'creator_id'];
+    protected $fillable = ['project_id', 'title', 'description', 'creator_id', 'status'];
 
     protected $table = 'laracms_tasks';
-
-    public $status = null;
 
     /**
      * @var LaracmsTaskHistory
@@ -18,6 +16,12 @@ class LaracmsTask extends Model
     public $lastHistory = null;
 
     public $minutes = 0;
+
+    const STATUS_WORKING = 'in_progress';
+    const STATUS_OPEN = 'open';
+    const STATUS_TESTING = 'testing';
+    const STATUS_DONE = 'done';
+    const STATUS_NEED_INFORMATION = 'need_information';
 
     public function project()
     {
@@ -29,6 +33,16 @@ class LaracmsTask extends Model
         return $this->hasMany(LaracmsTaskHistory::class, 'task_id');
     }
 
+    public function scopeFiltered($query)
+    {
+        foreach (request()->all() as $filter => $value)
+        {
+            if (!$value) continue;
+            $query->where($filter, $value);
+        }
+
+        return $query;
+    }
 
     public function getStatus()
     {
@@ -58,5 +72,22 @@ class LaracmsTask extends Model
             $this->lastHistory = $this->history()->orderByDesc('id')->first();
         }
         return $this->lastHistory;
+    }
+
+    public static function getStatuses($key = null)
+    {
+        $statuses = [
+            self::STATUS_NEED_INFORMATION => 'Need information',
+            self::STATUS_OPEN => 'Open',
+            self::STATUS_WORKING => 'In progress',
+            self::STATUS_DONE => 'Done',
+            self::STATUS_TESTING => 'Testing',
+        ];
+
+        if ($key) {
+            return $statuses[$key];
+        }
+
+        return $statuses;
     }
 }

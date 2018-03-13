@@ -5,7 +5,6 @@ namespace Grundmanis\Laracms\Modules\TaskManager\Controllers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTask;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskHistory;
 use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,8 +37,9 @@ class TaskController extends Controller
      */
     public function index()
     {
+        $tasks = $this->task->filtered()->with('project', 'history')->get();
         return view('laracms.tasks::tasks.index', [
-            'tasks' => $this->task->with('project', 'history')->get()
+            'tasks' => $tasks
         ]);
     }
 
@@ -98,7 +98,7 @@ class TaskController extends Controller
 
         if($request->status != $task->getStatus())
         {
-            if ($task->getStatus() == 'working')
+            if ($task->getStatus() == 'in_progress')
             {
 
                 $startTime = Carbon::parse($task->created_at);

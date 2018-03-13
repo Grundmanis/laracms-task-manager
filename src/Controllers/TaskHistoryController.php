@@ -20,23 +20,34 @@ class TaskHistoryController extends Controller
     {
         if (!$first = $task->history()->orderByDesc('id')->first())
         {
+            $task->status = LaracmsTask::STATUS_WORKING;
+            $task->save();
+
             $task->history()->create([
-                'status' => 'working',
+                'status' => LaracmsTask::STATUS_WORKING,
                 'user_id' => Auth::guard('laracms')->user()->id,
                 'minutes' => 0
             ]);
         } else {
-            if ($first->status == LaracmsTaskHistory::STATUS_WORKING) {
+            if ($first->status == LaracmsTask::STATUS_WORKING) {
+
+                $task->status = LaracmsTask::STATUS_OPEN;
+                $task->save();
+
                 $startTime = Carbon::parse($first->created_at);
                 $finishTime = Carbon::now();
                 $task->history()->create([
-                    'status' => LaracmsTaskHistory::STATUS_OPEN,
+                    'status' => LaracmsTask::STATUS_OPEN,
                     'user_id' => Auth::guard('laracms')->user()->id,
                     'minutes' => $startTime->diffInMinutes($finishTime)
                 ]);
             } else {
+
+                $task->status = LaracmsTask::STATUS_WORKING;
+                $task->save();
+
                 $task->history()->create([
-                    'status' => LaracmsTaskHistory::STATUS_WORKING,
+                    'status' => LaracmsTask::STATUS_WORKING,
                     'user_id' => Auth::guard('laracms')->user()->id,
                     'minutes' => 0
                 ]);

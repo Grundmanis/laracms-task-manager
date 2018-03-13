@@ -21,4 +21,9 @@ class LaracmsTaskProject extends Model
             'user_id'
         );
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(LaracmsTask::class, 'project_id');
+    }
 }
