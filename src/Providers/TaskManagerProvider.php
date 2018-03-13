@@ -18,7 +18,9 @@ class TaskManagerProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__ . '/../views', 'laracms.tasks');
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../laracms_task_manager_routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/../laracms_task_routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/../laracms_task_project_routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/../laracms_task_history_routes.php');
     }
 
 }

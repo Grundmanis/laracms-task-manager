@@ -4,30 +4,30 @@ namespace Grundmanis\Laracms\Modules\TaskManager\Controllers;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManager;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerHistory;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerProject;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTask;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskHistory;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TaskManagerController extends Controller
+class TaskController extends Controller
 {
     /**
-     * @var LaracmsTaskManagerProject
+     * @var LaracmsTaskProject
      */
     private $project;
 
     /**
-     * @var LaracmsTaskManager
+     * @var LaracmsTask
      */
     private $task;
 
     /**
      * TaskManagerController constructor.
-     * @param LaracmsTaskManagerProject $project
-     * @param LaracmsTaskManager $task
+     * @param LaracmsTaskProject $project
+     * @param LaracmsTask $task
      */
-    public function __construct(LaracmsTaskManagerProject $project, LaracmsTaskManager $task)
+    public function __construct(LaracmsTaskProject $project, LaracmsTask $task)
     {
         $this->project = $project;
         $this->task = $task;
@@ -72,14 +72,14 @@ class TaskManagerController extends Controller
         if ($request->stay) {
             return back()->with('status', 'Task created.');
         }
-        return redirect()->route('laracms.tasks')->with('status', 'Task created.');
+        return redirect()->route('laracms.task')->with('status', 'Task created.');
     }
 
     /**
-     * @param LaracmsTaskManager $task
+     * @param LaracmsTask $task
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(LaracmsTaskManager $task)
+    public function edit(LaracmsTask $task)
     {
         return view('laracms.tasks::tasks.form', [
             'projects' => $this->project->get(),
@@ -88,11 +88,11 @@ class TaskManagerController extends Controller
     }
 
     /**
-     * @param LaracmsTaskManager $task
+     * @param LaracmsTask $task
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(LaracmsTaskManager $task, Request $request)
+    public function update(LaracmsTask $task, Request $request)
     {
         $task->update($request->all());
 
@@ -120,46 +120,16 @@ class TaskManagerController extends Controller
         if ($request->stay) {
             return back()->with('status', 'Task updated.');
         }
-        return redirect()->route('laracms.tasks')->with('status', 'Task updated.');
+        return redirect()->route('laracms.task')->with('status', 'Task updated.');
     }
 
     /**
-     * @param LaracmsTaskManager $task
+     * @param LaracmsTask $task
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(LaracmsTaskManager $task)
+    public function destroy(LaracmsTask $task)
     {
         $task->delete();
         return redirect()->back()->with('status', 'Task deleted!');
-    }
-
-    public function work(LaracmsTaskManager $task, Request $request)
-    {
-        if (!$first = $task->history()->orderByDesc('id')->first())
-        {
-            $task->history()->create([
-               'status' => 'working',
-               'user_id' => Auth::guard('laracms')->user()->id,
-               'minutes' => 0
-            ]);
-        } else {
-            if ($first->status == LaracmsTaskManagerHistory::STATUS_WORKING) {
-                $startTime = Carbon::parse($first->created_at);
-                $finishTime = Carbon::now();
-                $task->history()->create([
-                    'status' => LaracmsTaskManagerHistory::STATUS_OPEN,
-                    'user_id' => Auth::guard('laracms')->user()->id,
-                    'minutes' => $startTime->diffInMinutes($finishTime)
-                ]);
-            } else {
-                $task->history()->create([
-                    'status' => LaracmsTaskManagerHistory::STATUS_WORKING,
-                    'user_id' => Auth::guard('laracms')->user()->id,
-                    'minutes' => 0
-                ]);
-            }
-        }
-
-        return redirect()->back();
     }
 }

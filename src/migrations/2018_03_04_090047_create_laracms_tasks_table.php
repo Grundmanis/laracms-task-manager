@@ -17,9 +17,13 @@ class CreateLaracmsTasksTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('description');
+            $table->enum('status', ['open', 'in_progress', 'done', 'testing', 'need_information']);
             $table->integer('creator_id');
             $table->integer('project_id');
             $table->timestamps();
+
+            $table->foreign('project_id')->references('id')->on('laracms_task_projects')->onDelete('cascade');
+            $table->foreign('creator_id')->references('id')->on('laracms_users')->onDelete('cascade');
         });
     }
 

@@ -3,12 +3,12 @@
 namespace Grundmanis\Laracms\Modules\TaskManager\Controllers;
 
 use App\Http\Controllers\Controller;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerProject;
-use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskManagerProjectEmployers;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskProject;
+use Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTaskProjectEmployer;
 use Grundmanis\Laracms\Modules\User\Models\LaracmsUser;
 use Illuminate\Http\Request;
 
-class TaskManagerProjectController extends Controller
+class TaskProjectController extends Controller
 {
     /**
      * @var LaracmsUser
@@ -16,25 +16,25 @@ class TaskManagerProjectController extends Controller
     private $users;
 
     /**
-     * @var LaracmsTaskManagerProject
+     * @var LaracmsTaskProject
      */
     private $project;
 
     /**
-     * @var LaracmsTaskManagerProjectEmployers
+     * @var LaracmsTaskProjectEmployer
      */
     private $employers;
 
     /**
      * TaskManagerProjectController constructor.
      * @param LaracmsUser $users
-     * @param LaracmsTaskManagerProject $project
-     * @param LaracmsTaskManagerProjectEmployers $employers
+     * @param LaracmsTaskProject $project
+     * @param LaracmsTaskProjectEmployer $employers
      */
     public function __construct(
         LaracmsUser $users,
-        LaracmsTaskManagerProject $project,
-        LaracmsTaskManagerProjectEmployers $employers
+        LaracmsTaskProject $project,
+        LaracmsTaskProjectEmployer $employers
     )
     {
         $this->users = $users;
@@ -71,14 +71,14 @@ class TaskManagerProjectController extends Controller
         $project = $this->project->create($request->all());
         $project->employers()->sync($request->users);
 
-        return redirect()->route('laracms.tasks.projects')->with('status', 'Project created!');
+        return redirect()->route('laracms.task.project')->with('status', 'Project created!');
     }
 
     /**
-     * @param LaracmsTaskManagerProject $project
+     * @param LaracmsTaskProject $project
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(LaracmsTaskManagerProject $project)
+    public function edit(LaracmsTaskProject $project)
     {
         return view('laracms.tasks::projects.form', [
             'project' => $project,
@@ -87,11 +87,11 @@ class TaskManagerProjectController extends Controller
     }
 
     /**
-     * @param LaracmsTaskManagerProject $project
+     * @param LaracmsTaskProject $project
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(LaracmsTaskManagerProject $project, Request $request)
+    public function update(LaracmsTaskProject $project, Request $request)
     {
         $project->update($request->all());
         $project->employers()->sync($request->users);
@@ -100,10 +100,10 @@ class TaskManagerProjectController extends Controller
     }
 
     /**
-     * @param LaracmsTaskManagerProject $project
+     * @param LaracmsTaskProject $project
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(LaracmsTaskManagerProject $project)
+    public function destroy(LaracmsTaskProject $project)
     {
         $project->delete();
         return redirect()->back()->with('status', 'Project deleted!');

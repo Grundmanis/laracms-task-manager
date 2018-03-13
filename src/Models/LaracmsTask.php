@@ -4,7 +4,7 @@ namespace Grundmanis\Laracms\Modules\TaskManager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LaracmsTaskManager extends Model
+class LaracmsTask extends Model
 {
     protected $fillable = ['project_id', 'title', 'description', 'creator_id'];
 
@@ -13,7 +13,7 @@ class LaracmsTaskManager extends Model
     public $status = null;
 
     /**
-     * @var LaracmsTaskManagerHistory
+     * @var LaracmsTaskHistory
      */
     public $lastHistory = null;
 
@@ -21,12 +21,12 @@ class LaracmsTaskManager extends Model
 
     public function project()
     {
-        return $this->belongsTo(LaracmsTaskManagerProject::class);
+        return $this->belongsTo(LaracmsTaskProject::class);
     }
 
     public function history()
     {
-        return $this->hasMany(LaracmsTaskManagerHistory::class, 'task_id');
+        return $this->hasMany(LaracmsTaskHistory::class, 'task_id');
     }
 
 

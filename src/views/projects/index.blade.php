@@ -3,7 +3,7 @@
 @section('content')
     <h1 class="page-header">Projects</h1>
     <div class="form-group">
-        <a class="btn btn-success" href="{{ route('laracms.tasks.projects.create') }}">Create</a>
+        <a class="btn btn-success" href="{{ route('laracms.task.project.create') }}">Create</a>
     </div>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -28,9 +28,9 @@
                     </td>
                     <td>0.00</td>
                     <td>
-                        <a href="{{ route('laracms.tasks.projects.edit', $project->id) }}">Edit</a>
+                        <a href="{{ route('laracms.task.project.edit', $project->id) }}">Edit</a>
                         |
-                        <a onclick="return confirm('Are you sure?')" href="{{ route('laracms.tasks.projects.destroy', $project->id) }}">Delete</a>
+                        <a onclick="return confirm('Are you sure?')" href="{{ route('laracms.task.project.destroy', $project->id) }}">Delete</a>
                     </td>
                 </tr>
             @endforeach

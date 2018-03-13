@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property mixed $employers
  */
-class LaracmsTaskManagerProject extends Model
+class LaracmsTaskProject extends Model
 {
     protected $fillable = ['name'];
 
@@ -16,7 +16,7 @@ class LaracmsTaskManagerProject extends Model
     {
         return $this->belongsToMany(
             LaracmsUser::class,
-            'laracms_task_manager_project_employers',
+            'laracms_task_project_employers',
             'project_id',
             'user_id'
         );
