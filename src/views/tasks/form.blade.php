@@ -41,10 +41,10 @@
         <div class="form-group">
             <label for="status">Status<span>*</span></label>
             <select class="form-control" name="status" id="status">
-                <option @if($task->getStatus() == 'open') selected @endif value="open">Open</option>
-                <option @if($task->getStatus() == 'working') selected @endif value="working">Working</option>
-                <option @if($task->getStatus() == 'testing') selected @endif value="testing">Testing</option>
-                <option @if($task->getStatus() == 'done') selected @endif value="done">Done</option>
+                <option @if(isset($task) && $task->getStatus() == 'open') selected @endif value="open">Open</option>
+                <option @if(isset($task) && $task->getStatus() == 'working') selected @endif value="working">Working</option>
+                <option @if(isset($task) && $task->getStatus() == 'testing') selected @endif value="testing">Testing</option>
+                <option @if(isset($task) && $task->getStatus() == 'done') selected @endif value="done">Done</option>
             </select>
 
         </div>
@@ -60,13 +60,17 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Save</button>
+        <button name="stay" value="1" type="submit" class="btn btn-primary">Save & Stay</button>
 
-        <h3>History <small>Total time: {{ $task->getHours() }} {{ str_plural('hour', $task->getHours()) }} </small></h3>
-        <table class="table table-striped">
+        @if(isset($task))
+            <h3>History <small>Total time: {{ $task->getHours() }} {{ str_plural('hour', $task->getHours()) }} </small></h3>
+            <table class="table table-striped">
             <tr>
                 <thead>
                     <tr>
-
+                        <th>
+                            Date
+                        </th>
                         <th>
                             Status
                         </th>
@@ -81,6 +85,7 @@
                 <tbody>
                     @foreach($task->history as $history)
                         <tr>
+                            <td>{{ $history->created_at }}</td>
                             <td>{{ $history->status }}</td>
                             <td>{{ $history->minutes }}</td>
                             <td>{{ $history->user_id }}</td>
@@ -89,5 +94,6 @@
                 </tbody>
             </tr>
         </table>
+        @endif
     </form>
 @endsection

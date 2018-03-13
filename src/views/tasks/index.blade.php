@@ -23,7 +23,7 @@
                 <tr>
                     <td>#</td>
                     <td>{{ $task->title }}</td>
-                    <td>{{ $task->project->name }}</td>
+                    <td><a href="{{ route('laracms.tasks.projects.edit', $task->project->id) }}">{{ $task->project->name }}</a></td>
                     <td>{{ $task->getHours() }}</td>
                     <td>{{ $task->getStatus() }}</td>
                     <td>

@@ -61,9 +61,18 @@ class TaskManagerController extends Controller
     {
         $data = $request->all();
         $data['creator_id'] = Auth::guard('laracms')->user()->id;
-        $this->task->create($data);
+        $task = $this->task->create($data);
 
-        return redirect()->route('laracms.tasks')->with('status', 'Task created!');
+        $task->history()->create([
+            'status' => $data['status'],
+            'user_id' => Auth::guard('laracms')->user()->id,
+            'minutes' => 0
+        ]);
+
+        if ($request->stay) {
+            return back()->with('status', 'Task created.');
+        }
+        return redirect()->route('laracms.tasks')->with('status', 'Task created.');
     }
 
     /**
@@ -86,7 +95,32 @@ class TaskManagerController extends Controller
     public function update(LaracmsTaskManager $task, Request $request)
     {
         $task->update($request->all());
-        return back()->with('status', 'Task updated.');
+
+        if($request->status != $task->getStatus())
+        {
+            if ($task->getStatus() == 'working')
+            {
+
+                $startTime = Carbon::parse($task->created_at);
+                $finishTime = Carbon::now();
+
+                $task->history()->create([
+                    'status' => $request->status,
+                    'user_id' => Auth::guard('laracms')->user()->id,
+                    'minutes' => $startTime->diffInMinutes($finishTime)
+                ]);
+            } else {
+                $task->history()->create([
+                   'status' => $request->status,
+                   'user_id' => Auth::guard('laracms')->user()->id,
+                    'minutes' => 0
+                ]);
+            }
+        }
+        if ($request->stay) {
+            return back()->with('status', 'Task updated.');
+        }
+        return redirect()->route('laracms.tasks')->with('status', 'Task updated.');
     }
 
     /**
