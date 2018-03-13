@@ -22,8 +22,8 @@ class CreateLaracmsTasksTable extends Migration
             $table->integer('project_id');
             $table->timestamps();
 
-            $table->foreign('project_id')->references('id')->on('laracms_task_projects')->onDelete('cascade');
-            $table->foreign('creator_id')->references('id')->on('laracms_users')->onDelete('cascade');
+//            $table->foreign('project_id')->references('id')->on('laracms_task_projects')->onDelete('cascade');
+//            $table->foreign('creator_id')->references('id')->on('laracms_users')->onDelete('cascade');
         });
     }
 

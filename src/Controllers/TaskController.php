@@ -37,7 +37,11 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = $this->task->filtered()->with('project', 'history')->get();
+        $tasks = $this->task
+            ->filtered()
+            ->with('project', 'history')
+            ->get();
+
         return view('laracms.tasks::tasks.index', [
             'tasks' => $tasks
         ]);
@@ -59,19 +63,21 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::guard('laracms')->user();
         $data = $request->all();
-        $data['creator_id'] = Auth::guard('laracms')->user()->id;
-        $task = $this->task->create($data);
+        $data['creator_id'] = $user->id;
 
+        $task = $this->task->create($data);
         $task->history()->create([
-            'status' => $data['status'],
-            'user_id' => Auth::guard('laracms')->user()->id,
+            'status'  => $data['status'],
+            'user_id' => $user->id,
             'minutes' => 0
         ]);
 
         if ($request->stay) {
             return back()->with('status', 'Task created.');
         }
+
         return redirect()->route('laracms.task')->with('status', 'Task created.');
     }
 
@@ -83,7 +89,7 @@ class TaskController extends Controller
     {
         return view('laracms.tasks::tasks.form', [
             'projects' => $this->project->get(),
-            'task' => $task
+            'task'     => $task
         ]);
     }
 
@@ -95,31 +101,30 @@ class TaskController extends Controller
     public function update(LaracmsTask $task, Request $request)
     {
         $task->update($request->all());
+        $user = Auth::guard('laracms')->user();
 
-        if($request->status != $task->getStatus())
-        {
-            if ($task->getStatus() == 'in_progress')
-            {
-
+        if ($request->status != $task->status) {
+            if ($task->status == LaracmsTask::STATUS_WORKING) {
                 $startTime = Carbon::parse($task->created_at);
                 $finishTime = Carbon::now();
-
                 $task->history()->create([
-                    'status' => $request->status,
-                    'user_id' => Auth::guard('laracms')->user()->id,
+                    'status'  => $request->status,
+                    'user_id' => $user->id,
                     'minutes' => $startTime->diffInMinutes($finishTime)
                 ]);
             } else {
                 $task->history()->create([
-                   'status' => $request->status,
-                   'user_id' => Auth::guard('laracms')->user()->id,
+                    'status'  => $request->status,
+                    'user_id' => $user->id,
                     'minutes' => 0
                 ]);
             }
         }
+
         if ($request->stay) {
             return back()->with('status', 'Task updated.');
         }
+
         return redirect()->route('laracms.task')->with('status', 'Task updated.');
     }
 
@@ -131,5 +136,14 @@ class TaskController extends Controller
     {
         $task->delete();
         return redirect()->back()->with('status', 'Task deleted!');
+    }
+
+    /**
+     * @param LaracmsTask $task
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function show(LaracmsTask $task)
+    {
+        return view('laracms.tasks::tasks.show', compact('task'));
     }
 }

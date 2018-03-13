@@ -50,7 +50,7 @@
             @foreach($tasks as $task)
                 <tr>
                     <td>#</td>
-                    <td>{{ $task->title }}</td>
+                    <td><a href="{{ route('laracms.task.show', $task->id) }}">{{ $task->title }}</a></td>
                     <td><a href="{{ route('laracms.task.project.edit', $task->project->id) }}">{{ $task->project->name }}</a></td>
                     <td>{{ $task->getHours() }}</td>
                     <td>{{ \Grundmanis\Laracms\Modules\TaskManager\Models\LaracmsTask::getStatuses($task->getStatus()) }}</td>

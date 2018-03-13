@@ -15,35 +15,52 @@ class LaracmsTask extends Model
      */
     public $lastHistory = null;
 
+    /**
+     * @var int
+     */
     public $minutes = 0;
 
-    const STATUS_WORKING = 'in_progress';
-    const STATUS_OPEN = 'open';
+    const STATUS_NEED_INFORMATION = 'need_information';
     const STATUS_TESTING = 'testing';
     const STATUS_DONE = 'done';
-    const STATUS_NEED_INFORMATION = 'need_information';
+    const STATUS_WORKING = 'in_progress';
+    const STATUS_OPEN = 'open';
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function project()
     {
         return $this->belongsTo(LaracmsTaskProject::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function history()
     {
         return $this->hasMany(LaracmsTaskHistory::class, 'task_id');
     }
 
+    /**
+     * @param $query
+     * @return mixed
+     */
     public function scopeFiltered($query)
     {
-        foreach (request()->all() as $filter => $value)
-        {
-            if (!$value) continue;
+        foreach (request()->all() as $filter => $value) {
+            if (!$value) {
+                continue;
+            }
             $query->where($filter, $value);
         }
 
         return $query;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getStatus()
     {
         if (!$this->status) {
@@ -53,6 +70,9 @@ class LaracmsTask extends Model
         return $this->status;
     }
 
+    /**
+     * @return int|mixed
+     */
     public function getTime()
     {
         if (!$this->minutes) {
@@ -61,11 +81,17 @@ class LaracmsTask extends Model
         return $this->minutes;
     }
 
+    /**
+     * @return float
+     */
     public function getHours()
     {
         return round($this->getTime() / 60, 2);
     }
 
+    /**
+     * @return LaracmsTaskHistory|Model|null|static
+     */
     public function getLastHistory()
     {
         if (!$this->lastHistory) {
@@ -74,14 +100,18 @@ class LaracmsTask extends Model
         return $this->lastHistory;
     }
 
+    /**
+     * @param null $key
+     * @return array|mixed
+     */
     public static function getStatuses($key = null)
     {
         $statuses = [
             self::STATUS_NEED_INFORMATION => 'Need information',
-            self::STATUS_OPEN => 'Open',
-            self::STATUS_WORKING => 'In progress',
-            self::STATUS_DONE => 'Done',
-            self::STATUS_TESTING => 'Testing',
+            self::STATUS_OPEN             => 'Open',
+            self::STATUS_WORKING          => 'In progress',
+            self::STATUS_DONE             => 'Done',
+            self::STATUS_TESTING          => 'Testing',
         ];
 
         if ($key) {
